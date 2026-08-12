@@ -1,11 +1,18 @@
-# bookchaowalit-analytics-dashboard-frontend
+# Analytics Dashboard
 
-Portfolio project: **analytics-dashboard** — part of the 101 Projects challenge.
+KPI dashboard with sample series.
 
-Live: https://analytics-dashboard.bookchaowalit.com
+## Features
+- Interactive demo
 
-## Related
+## Limitations
+- Not production ML/SaaS
 
-- **Mobile App:** [bookchaowalit-analytics-dashboard-mobile](https://github.com/bookchaowalit-mobile/bookchaowalit-analytics-dashboard-mobile)
-- **Portfolio:** [bookchaowalit.com](https://bookchaowalit.com)
+## Run
+```bash
+npm install
+npm run dev
+```
 
+## Honesty
+Portfolio demo. Not multi-tenant SaaS. Prefer local-only state over fake production claims.
