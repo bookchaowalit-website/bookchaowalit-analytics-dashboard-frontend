@@ -1,12 +1,15 @@
-# Analytics Dashboard
+# Signal Ledger
 
-KPI dashboard with sample series.
+A local reading instrument for noticing movement in a small performance series.
 
 ## Features
-- Interactive demo
+- Switch between 24-hour, 7-day, and 30-day readings
+- Read an accessible SVG trace with peak and average context
+- Copy a concise observation for a follow-up note
 
 ## Limitations
-- Not production ML/SaaS
+- Uses deterministic local sample data
+- No production data source or multi-tenant backend
 
 ## Run
 ```bash

@@ -1,133 +1,202 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 
-function Shell({
-  title,
-  subtitle,
-  badge = "Portfolio demo · local-only",
-  children,
-}: {
-  title: string;
-  subtitle: string;
-  badge?: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-100">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <header className="mb-8">
-          <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">{badge}</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">{title}</h1>
-          <p className="mt-2 max-w-2xl text-sm text-zinc-600 dark:text-zinc-400">{subtitle}</p>
-        </header>
-        {children}
-        <footer className="mt-10 border-t border-zinc-200 pt-4 text-xs text-zinc-500 dark:border-zinc-800">
-          Honest demo: no multi-tenant backend. State (if any) stays in this browser.
-        </footer>
-      </div>
-    </div>
-  );
+type WindowKey = "24h" | "7d" | "30d";
+
+type Reading = {
+  label: string;
+  values: number[];
+  ticks: string[];
+  visitors: string;
+  sessions: string;
+  conversion: string;
+  change: string;
+  note: string;
+};
+
+const readings: Record<WindowKey, Reading> = {
+  "24h": {
+    label: "Last 24 hours",
+    values: [4, 6, 5, 8, 7, 9, 6, 10, 8, 7, 9, 11],
+    ticks: ["06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"],
+    visitors: "420",
+    sessions: "610",
+    conversion: "2.8%",
+    change: "+14%",
+    note: "The evening lift is the clearest movement in this window. Check what was published around 18:00 before treating it as a trend.",
+  },
+  "7d": {
+    label: "Last 7 days",
+    values: [120, 140, 110, 160, 180, 150, 200],
+    ticks: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    visitors: "3.1k",
+    sessions: "4.8k",
+    conversion: "3.4%",
+    change: "+22%",
+    note: "The week closes above its opening level, but Wednesday is a real dip. Keep that interruption visible when comparing the next period.",
+  },
+  "30d": {
+    label: "Last 30 days",
+    values: [800, 920, 880, 1100, 1050, 1200, 1150, 1300],
+    ticks: ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"],
+    visitors: "12.4k",
+    sessions: "19k",
+    conversion: "3.1%",
+    change: "+31%",
+    note: "The longer view is climbing in steps rather than smoothly. That shape is useful evidence, not noise to hide behind an average.",
+  },
+};
+
+const windowKeys: WindowKey[] = ["24h", "7d", "30d"];
+
+function linePoints(values: number[]) {
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const spread = Math.max(max - min, 1);
+
+  return values.map((value, index) => ({
+    x: 32 + (index * 936) / Math.max(values.length - 1, 1),
+    y: 42 + ((max - value) / spread) * 218,
+    value,
+  }));
 }
 
-function Button({
-  children,
-  onClick,
-  variant = "primary",
-  disabled,
-  type = "button",
-  className = "",
-}: {
-  children: ReactNode;
-  onClick?: () => void;
-  variant?: "primary" | "secondary" | "ghost" | "danger";
-  disabled?: boolean;
-  type?: "button" | "submit";
-  className?: string;
-}) {
-  const base =
-    "inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium transition disabled:opacity-50 " +
-    className;
-  const styles =
-    variant === "primary"
-      ? "bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900"
-      : variant === "secondary"
-        ? "bg-white text-zinc-900 ring-1 ring-zinc-200 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-100 dark:ring-zinc-700"
-        : variant === "danger"
-          ? "bg-red-600 text-white hover:bg-red-500"
-          : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900";
-  return (
-    <button type={type} disabled={disabled} onClick={onClick} className={`${base} ${styles}`}>
-      {children}
-    </button>
-  );
+function formatReading(value: number) {
+  return value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value.toLocaleString();
 }
-
-const inputClass =
-  "w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm outline-none ring-zinc-400 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950";
-
-function useLocalStorage<T>(key: string, initial: T) {
-  const [value, setValue] = useState<T>(initial);
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(key);
-      if (raw != null) setValue(JSON.parse(raw) as T);
-    } catch {
-      /* ignore */
-    }
-    setReady(true);
-  }, [key]);
-  useEffect(() => {
-    if (!ready) return;
-    localStorage.setItem(key, JSON.stringify(value));
-  }, [key, value, ready]);
-  return [value, setValue] as const;
-}
-
-function uid() {
-  return crypto.randomUUID();
-}
-
-async function copyText(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 
 export default function Home() {
-  const [range, setRange] = useState("7d");
-  const series = range === "24h" ? [4, 6, 5, 8, 7, 9, 6, 10, 8, 7, 9, 11] : range === "7d" ? [120, 140, 110, 160, 180, 150, 200] : [800, 920, 880, 1100, 1050, 1200, 1150, 1300];
-  const max = Math.max(...series);
+  const [windowKey, setWindowKey] = useState<WindowKey>("7d");
+  const [copied, setCopied] = useState(false);
+  const reading = readings[windowKey];
+  const points = useMemo(() => linePoints(reading.values), [reading.values]);
+  const average = Math.round(reading.values.reduce((sum, value) => sum + value, 0) / reading.values.length);
+  const peak = Math.max(...reading.values);
+  const peakIndex = reading.values.indexOf(peak);
+  const polyline = points.map((point) => `${point.x},${point.y}`).join(" ");
+
+  async function copyReading() {
+    const summary = `${reading.label}: ${reading.change} movement, ${reading.visitors} visitors, peak ${formatReading(peak)}.`;
+    try {
+      await navigator.clipboard.writeText(summary);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  }
+
   return (
-    <Shell title="Analytics Dashboard" subtitle="Traffic snapshot using sample series — wire your own source later." badge="Sample analytics">
-      <div className="mb-4 flex gap-2">
-        {["24h", "7d", "30d"].map((r) => (
-          <Button key={r} variant={range === r ? "primary" : "secondary"} onClick={() => setRange(r)}>{r}</Button>
-        ))}
-      </div>
-      <div className="grid gap-3 sm:grid-cols-4">
-        {[
-          ["Users", range === "24h" ? "420" : range === "7d" ? "3.1k" : "12.4k"],
-          ["Sessions", range === "24h" ? "610" : range === "7d" ? "4.8k" : "19k"],
-          ["Conv.", "2.8%"],
-          ["Revenue", "฿0 (demo)"],
-        ].map(([l, v]) => (
-          <div key={l} className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
-            <div className="text-xs text-zinc-500">{l}</div>
-            <div className="text-2xl font-semibold">{v}</div>
+    <main className="ledger-shell">
+      <div className="ledger-frame">
+        <header className="ledger-header">
+          <div className="wordmark">
+            <span className="wordmark-mark" aria-hidden="true">SL</span>
+            <span>Signal Ledger</span>
           </div>
-        ))}
+          <p className="honesty-note">Local reading instrument · sample data</p>
+        </header>
+
+        <section className="intro" aria-labelledby="page-title">
+          <div>
+            <h1 id="page-title">See what moved.</h1>
+            <p className="intro-copy">A quiet place to read a performance signal, keep the interruption visible, and decide what to investigate next.</p>
+          </div>
+          <div className="window-control" aria-label="Choose a reading window" role="group">
+            <span className="control-label">Reading window</span>
+            <div className="window-buttons">
+              {windowKeys.map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={windowKey === key ? "window-button is-active" : "window-button"}
+                  aria-pressed={windowKey === key}
+                  onClick={() => setWindowKey(key)}
+                >
+                  {key}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <dl className="reading-strip" aria-label={`${reading.label} summary`}>
+          <div className="reading-cell reading-cell-featured">
+            <dt>Movement</dt>
+            <dd>{reading.change} <span>{reading.label}</span></dd>
+          </div>
+          <div className="reading-cell">
+            <dt>Visitors</dt>
+            <dd>{reading.visitors} <span>unique visits</span></dd>
+          </div>
+          <div className="reading-cell">
+            <dt>Sessions</dt>
+            <dd>{reading.sessions} <span>observed visits</span></dd>
+          </div>
+          <div className="reading-cell">
+            <dt>Conversion</dt>
+            <dd>{reading.conversion} <span>demo signal</span></dd>
+          </div>
+        </dl>
+
+        <section className="plot-section" aria-labelledby="plot-title">
+          <div className="section-heading">
+            <div>
+              <h2 id="plot-title">Traffic trace</h2>
+              <p>{reading.label} · plotted at each observed interval</p>
+            </div>
+            <span className="trace-key"><span className="trace-key-line" aria-hidden="true" /> visitors</span>
+          </div>
+
+          <div className="plot-paper">
+            <svg className="trace-chart" viewBox="0 0 1000 330" role="img" aria-labelledby="chart-title chart-description">
+              <title id="chart-title">{`Visitor trace for ${reading.label}`}</title>
+              <desc id="chart-description">The line peaks at {formatReading(peak)} around {reading.ticks[peakIndex] ?? "the final interval"}. The average is {formatReading(average)}.</desc>
+              {[42, 97, 152, 207, 262].map((y) => <line key={y} className="chart-grid" x1="32" x2="968" y1={y} y2={y} />)}
+              <line className="chart-axis" x1="32" x2="968" y1="262" y2="262" />
+              <polyline className="chart-trace" points={polyline} />
+              {points.map((point, index) => (
+                <g key={`${point.x}-${point.y}`}>
+                  <circle className="chart-point" cx={point.x} cy={point.y} r="5" />
+                  <title>{`${reading.ticks[index] ?? "Interval"}: ${formatReading(point.value)} visitors`}</title>
+                </g>
+              ))}
+              {reading.ticks.map((tick, index) => {
+                const x = 32 + (index * 936) / Math.max(reading.ticks.length - 1, 1);
+                return <text key={tick} className="chart-label" aria-hidden="true" x={x} y="298" textAnchor="middle">{tick}</text>;
+              })}
+            </svg>
+          </div>
+        </section>
+
+        <section className="observation-grid" aria-label="Reading notes">
+          <article className="observation-note">
+            <p className="note-label">Field note</p>
+            <p className="note-copy">{reading.note}</p>
+            <button type="button" className="text-action" onClick={copyReading}>{copied ? "Reading copied" : "Copy this reading"}</button>
+          </article>
+          <dl className="observation-facts">
+            <div>
+              <dt>Peak</dt>
+              <dd>{formatReading(peak)} <span>{reading.ticks[peakIndex]}</span></dd>
+            </div>
+            <div>
+              <dt>Average</dt>
+              <dd>{formatReading(average)} <span>per interval</span></dd>
+            </div>
+            <div>
+              <dt>Next question</dt>
+              <dd>What changed before the lift?</dd>
+            </div>
+          </dl>
+        </section>
+
+        <footer className="ledger-footer">
+          <span>Built for inspection, not theatre.</span>
+          <span>Nothing here connects to a production source.</span>
+        </footer>
       </div>
-      <div className="mt-6 flex h-48 items-end gap-1 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
-        {series.map((v, i) => (
-          <div key={i} className="flex-1 rounded-t bg-zinc-900 dark:bg-zinc-100" style={{ height: `${(v / max) * 100}%` }} title={String(v)} />
-        ))}
-      </div>
-    </Shell>
+    </main>
   );
 }

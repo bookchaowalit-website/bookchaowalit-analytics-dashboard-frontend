@@ -9,7 +9,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 export const metadata: Metadata = {
   title: "Analytics Dashboard | Bookchaowalit",
-  description: "KPI dashboard with sample series.",
+  description: "A local, transparent instrument for reading performance signals.",
   keywords: ["analytics-dashboard", "demo"],
   authors: [{ name: "Bookchaowalit", url: "https://bookchaowalit.com" }],
   creator: "Bookchaowalit",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     title: "Analytics Dashboard | Bookchaowalit",
-    description: "KPI dashboard with sample series.",
+    description: "A local, transparent instrument for reading performance signals.",
     siteName: "Bookchaowalit",
   },
   robots: { index: true, follow: true },

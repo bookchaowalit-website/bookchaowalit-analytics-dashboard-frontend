@@ -1,26 +1,472 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #f2eee4;
+  --paper-deep: #e8e1d3;
+  --ink: #1d2422;
+  --muted: #5d665f;
+  --rule: #c8c3b8;
+  --accent: #b34b31;
+  --accent-dark: #803723;
+  --blue: #3e626d;
+  --font-body: var(--font-geist-sans), Arial, sans-serif;
+  --font-data: var(--font-geist-mono), "SFMono-Regular", Consolas, monospace;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-data);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.ledger-shell {
+  min-height: 100vh;
+  padding: 28px 20px 56px;
+  background: var(--paper);
+}
+
+.ledger-frame {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.ledger-header,
+.ledger-footer,
+.intro,
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.ledger-header {
+  min-height: 48px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 0.79rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.wordmark-mark {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  font-family: var(--font-data);
+  font-size: 0.58rem;
+  letter-spacing: -0.08em;
+}
+
+.honesty-note,
+.ledger-footer {
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+}
+
+.intro {
+  align-items: end;
+  padding: 76px 0 56px;
+}
+
+.intro h1 {
+  max-width: 650px;
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(3.4rem, 9vw, 7.5rem);
+  font-weight: 650;
+  letter-spacing: -0.075em;
+  line-height: 0.88;
+}
+
+.intro-copy {
+  max-width: 560px;
+  margin: 26px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.window-control {
+  flex: 0 0 auto;
+  min-width: 224px;
+  padding-bottom: 4px;
+}
+
+.control-label,
+.reading-cell dt,
+.note-label,
+.observation-facts dt {
+  color: var(--muted);
+  font-family: var(--font-data);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.window-buttons {
+  display: flex;
+  gap: 4px;
+  margin-top: 9px;
+  padding: 4px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+
+.window-button {
+  min-width: 58px;
+  min-height: 38px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  transition: background 180ms ease-out, color 180ms ease-out, transform 180ms ease-out;
+}
+
+.window-button:hover {
+  color: var(--ink);
+}
+
+.window-button:active {
+  transform: scale(0.96);
+}
+
+.window-button.is-active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.reading-strip {
+  display: grid;
+  grid-template-columns: 1.45fr repeat(3, 1fr);
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+}
+
+.reading-cell {
+  min-height: 136px;
+  padding: 22px 22px 18px 0;
+  border-right: 1px solid var(--rule);
+}
+
+.reading-cell:not(:first-child) {
+  padding-left: 22px;
+}
+
+.reading-cell:last-child {
+  border-right: 0;
+}
+
+.reading-cell dd {
+  margin: 12px 0 5px;
+  color: var(--ink);
+  font-family: var(--font-data);
+  font-size: clamp(1.75rem, 4vw, 2.9rem);
+  letter-spacing: -0.08em;
+  line-height: 1;
+}
+
+.reading-cell dd span {
+  color: var(--muted);
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+.reading-cell-featured dd {
+  color: var(--accent);
+}
+
+.plot-section {
+  padding: 70px 0 0;
+}
+
+.section-heading {
+  align-items: end;
+  padding-bottom: 18px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: clamp(1.55rem, 3vw, 2.4rem);
+  font-weight: 620;
+  letter-spacing: -0.05em;
+}
+
+.section-heading p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.trace-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-family: var(--font-data);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.trace-key-line {
+  width: 34px;
+  height: 2px;
+  background: var(--accent);
+}
+
+.plot-paper {
+  overflow: hidden;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.trace-chart {
+  display: block;
+  width: 100%;
+  min-height: 280px;
+  padding: 24px 12px 10px;
+}
+
+.chart-grid {
+  stroke: var(--rule);
+  stroke-dasharray: 2 9;
+  stroke-width: 1;
+}
+
+.chart-axis {
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+
+.chart-trace {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4;
+  animation: trace-arrive 650ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.chart-point {
+  fill: var(--paper);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.chart-point:hover {
+  fill: var(--accent);
+}
+
+.chart-label {
+  fill: var(--muted);
+  font-family: var(--font-data);
+  font-size: 12px;
+}
+
+.observation-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+  gap: 56px;
+  padding: 46px 0 68px;
+}
+
+.observation-note {
+  max-width: 560px;
+  padding-top: 2px;
+}
+
+.note-label {
+  margin: 0 0 15px;
+}
+
+.note-copy {
+  max-width: 52ch;
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  letter-spacing: -0.025em;
+  line-height: 1.35;
+}
+
+.text-action {
+  margin-top: 26px;
+  padding: 0 0 4px;
+  border: 0;
+  border-bottom: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent-dark);
+  cursor: pointer;
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.text-action:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.observation-facts {
+  margin: 0;
+  border-top: 1px solid var(--ink);
+}
+
+.observation-facts > div {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 18px;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.observation-facts dt,
+.observation-facts dd {
+  margin: 0;
+}
+
+.observation-facts dd {
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.observation-facts dd span {
+  color: var(--muted);
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+}
+
+.ledger-footer {
+  align-items: start;
+  padding-top: 18px;
+  border-top: 1px solid var(--ink);
+}
+
+@keyframes trace-arrive {
+  from { stroke-dasharray: 0 1200; }
+  to { stroke-dasharray: 1200 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-trace,
+  .window-button {
+    animation: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .ledger-shell {
+    padding: 18px 16px 42px;
+  }
+
+  .ledger-header,
+  .intro,
+  .section-heading,
+  .ledger-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .intro {
+    gap: 38px;
+    padding: 58px 0 40px;
+  }
+
+  .intro h1 {
+    font-size: clamp(3.25rem, 17vw, 5.6rem);
+  }
+
+  .window-control {
+    width: 100%;
+  }
+
+  .window-buttons {
+    width: fit-content;
+  }
+
+  .reading-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .reading-cell,
+  .reading-cell:not(:first-child) {
+    min-height: 118px;
+    padding: 18px 14px 16px 0;
+  }
+
+  .reading-cell:nth-child(2n) {
+    padding-left: 14px;
+    border-right: 0;
+  }
+
+  .reading-cell:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .trace-chart {
+    min-height: 240px;
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .observation-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-bottom: 48px;
+  }
+
+  .observation-facts > div {
+    grid-template-columns: 100px 1fr;
+  }
 }
