@@ -9,8 +9,9 @@
   --accent: #b34b31;
   --accent-dark: #803723;
   --blue: #3e626d;
-  --font-body: var(--font-geist-sans), Arial, sans-serif;
-  --font-data: var(--font-geist-mono), "SFMono-Regular", Consolas, monospace;
+  --font-display: var(--font-plex-sans), Arial, sans-serif;
+  --font-body: var(--font-plex-sans), Arial, sans-serif;
+  --font-data: var(--font-plex-mono), "SFMono-Regular", Consolas, monospace;
 }
 
 @theme inline {
@@ -119,6 +120,7 @@ button:focus-visible {
   font-weight: 650;
   letter-spacing: -0.075em;
   line-height: 0.88;
+  font-family: var(--font-display);
 }
 
 .intro-copy {
@@ -238,6 +240,7 @@ button:focus-visible {
   font-size: clamp(1.55rem, 3vw, 2.4rem);
   font-weight: 620;
   letter-spacing: -0.05em;
+  font-family: var(--font-display);
 }
 
 .section-heading p {

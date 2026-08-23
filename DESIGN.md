@@ -11,18 +11,18 @@ colors:
   accent-rust-deep: "#803723"
 typography:
   display:
-    fontFamily: "Geist, Arial, sans-serif"
+    fontFamily: "IBM Plex Sans, Arial, sans-serif"
     fontSize: "clamp(3.4rem, 9vw, 7.5rem)"
     fontWeight: 650
     lineHeight: 0.88
     letterSpacing: "-0.075em"
   body:
-    fontFamily: "Geist, Arial, sans-serif"
+    fontFamily: "IBM Plex Sans, Arial, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.65
   data:
-    fontFamily: "Geist Mono, SFMono-Regular, Consolas, monospace"
+    fontFamily: "IBM Plex Mono, SFMono-Regular, Consolas, monospace"
     fontSize: "0.72rem"
     fontWeight: 400
     lineHeight: 1.4
@@ -77,11 +77,11 @@ The palette is a warm paper field with near-black ink and one deliberately scarc
 
 ## Typography
 
-**Display Font:** Geist (with Arial, sans-serif)
+**Display Font:** IBM Plex Sans (with Arial, sans-serif)
 
-**Body Font:** Geist (with Arial, sans-serif)
+**Body Font:** IBM Plex Sans (with Arial, sans-serif)
 
-**Label/Mono Font:** Geist Mono (with SFMono-Regular, Consolas, monospace)
+**Label/Mono Font:** IBM Plex Mono (with SFMono-Regular, Consolas, monospace)
 
 **Character:** Display and body text are calm and highly legible. Mono is reserved for measured values, labels, and controls so it reads as data rather than a costume.
 
